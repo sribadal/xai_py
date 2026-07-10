@@ -1,0 +1,140 @@
+"""
+NKR clinical variable definitions.
+
+Central registry of column names from the Netherlands Cancer Registry,
+grouped by role: pre-treatment features, treatment indicators, outcome
+endpoints, and dtype classifications (categorical, numerical, string-like).
+Includes typical clinical ranges for outlier detection and capping.
+"""
+PRE_TREATMENT_VARIABLES = [
+    "gesl",
+    "leeft_cat",
+    "incjr",
+    "seizoen",
+    "cci_cat",
+    "cci",
+    "geboorteland",
+    "perf_stat",
+    "ca199",
+    "bilirubine",
+    "albumine",
+    "ldh",
+    "crp",
+    "diag_basis",
+    "topo_sublok",
+    "morf",
+    "morf_cat",
+    "diffgrad",
+    "ct",
+    "cn",
+    "cm",
+    "pm",
+    "cstadium",
+    "pstadium",
+    "stadium",
+    "ond_lymf",
+    "meta_bijnier",
+    "meta_bot",
+    "meta_hersenen",
+    "meta_lever",
+    "meta_long",
+    "meta_lymf",
+    "meta_perit",
+    "meta_overig",
+    "klin_tum_afm",
+    "veneus_vaatbetr",
+    "arterieel_vaatbetr",
+]
+
+TREATMENT_VARIABLES = [
+    "tumgericht_ther",
+    "expl_chir",
+    "chir",
+    "destr",
+    "rt",
+    "meta_rt",
+    "meta_chir",
+    "lok_chemo_immuno",
+    "chemo",
+    "target",
+]
+
+OUTCOME_VARIABLES = [
+    "rfs_event",
+    "rfs_int",
+    "pfs_event",
+    "pfs_int",
+    "rfs_1jaar_afgerond",
+    "rfs_3jaar_afgerond",
+    "rfs_5jaar_afgerond",
+    "pfs_1jaar_afgerond",
+    "pfs_3jaar_afgerond",
+    "pfs_5jaar_afgerond",
+    "vit_stat",
+    "vit_stat_int",
+]
+
+CATEGORICAL_COLUMNS = [
+    "gesl",
+    "leeft_cat",
+    "incjr",
+    "seizoen",
+    "cci_cat",
+    "geboorteland",
+    "perf_stat",
+    "diag_basis",
+    "topo_sublok",
+    "morf",
+    "morf_cat",
+    "diffgrad",
+    "ct",
+    "cn",
+    "pm",
+    "cm",
+    "cstadium",
+    "pstadium",
+    "stadium",
+    "ond_lymf",
+    "meta_bijnier",
+    "meta_bot",
+    "meta_hersenen",
+    "meta_lever",
+    "meta_long",
+    "meta_lymf",
+    "meta_perit",
+    "meta_overig",
+    "klin_tum_afm",
+    "veneus_vaatbetr",
+    "arterieel_vaatbetr",
+    "survival_3m",
+]
+
+NUMERICAL_COLUMNS = [
+    "ca199",
+    "bilirubine",
+    "albumine",
+    "ldh",
+    "crp",
+]
+
+STRING_LIKE_COLUMNS = [
+    "ct",
+    "cn",
+    "cm",
+    "pm",
+    "cstadium",
+    "pstadium",
+]
+
+TYPICAL_RANGES = {
+    "perf_stat": (0, 4),
+    "ca199": (0, 9998.9),
+    "bilirubine": (0, 500),
+    "albumine": (15, 60),
+    "ldh": (0, 5000),
+    "diffgrad": (0, 4),
+    "ond_lymf": (0, 80),
+    "klin_tum_afm": (1, 899),
+    "crp": (0, 1000),
+    "cci": (0, 20),
+}
