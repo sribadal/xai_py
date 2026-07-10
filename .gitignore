@@ -1,0 +1,30 @@
+# Ignore directory contents
+data/**
+artifacts/**
+typst/**
+outputs/**
+_outputs/**
+backup/**
+scripts/**
+exports/**
+src/xai_decision_making/analysis
+
+# Ignore gitkeep placeholders
+!data/.gitkeep
+!artifacts/.gitkeep
+!src/xai_decision_making/analysis/.gitkeep
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Ignore UV Metadata
+*.egg-info/
+src/*.egg-info/
+build/
+dist/
