@@ -7,12 +7,15 @@ _outputs/**
 backup/**
 scripts/**
 exports/**
-src/xai_decision_making/analysis
+src/xai_decision_making/analysis/data/**
+src/xai_decision_making/analysis/output/**
 
 # Ignore gitkeep placeholders
 !data/.gitkeep
 !artifacts/.gitkeep
 !src/xai_decision_making/analysis/.gitkeep
+!src/xai_decision_making/analysis/data/.gitkeep
+!src/xai_decision_making/analysis/output/.gitkeep
 
 # macOS
 .DS_Store
