@@ -446,12 +446,21 @@ def figure_target_valence(units):
     save_figure(fig, FIGURES, "fig_target_valence")
 
 
-def write_figures(units):
-    reported = reported_theme_grid(units)
-    if not reported.empty:
-        _draw_grid(reported, "fig_reported_themes", sort_by_coverage=False)
-    figure_target_valence(units)
-    figure_eval_target_by_type(units)
+def figure_reported_themes(units):
+    """The themes discussed in the paper, by participant."""
+    grid = reported_theme_grid(units)
+    if not grid.empty:
+        _draw_grid(grid, "fig_reported_themes", sort_by_coverage=False)
+
+
+def figure_participant_themes(units):
     grid = participant_theme_grid(units)
     if not grid.empty:
         _draw_grid(grid, "fig_participant_themes")
+
+
+def write_figures(units):
+    figure_reported_themes(units)
+    figure_target_valence(units)
+    figure_eval_target_by_type(units)
+    figure_participant_themes(units)

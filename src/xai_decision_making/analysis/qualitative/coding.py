@@ -18,8 +18,9 @@ from xai_decision_making.analysis.common import (
 
 # --- Coders and sessions -----------------------------------------------------
 
-AUTHOR_CODER = "shivam"
-SECOND_CODER = "shahab"
+# Coder labels, also used in the sheet file names (coding_sheet_P3_author.xlsx).
+AUTHOR_CODER = "author"
+SECOND_CODER = "second_coder"
 MODEL_CODER = "model"
 CODERS = [AUTHOR_CODER, SECOND_CODER, MODEL_CODER]
 ENGLISH_SESSIONS = ["P1", "P4"]
@@ -98,6 +99,15 @@ VALENCES = {"positive", "negative", "neutral"}
 INTERVIEWER_SUPPLIED = "interviewer_supplied"
 SOURCES = {"spontaneous", "prompted", INTERVIEWER_SUPPLIED}
 GENERAL_TYPE = "General"
+
+# Code pairs from different main categories named in the frame's decision rules.
+# For these the rule says which one to use, so both on one unit is a coding error.
+FRAME_CHOOSE_ONE = {("A1", "B1"), ("A2", "B5"), ("A3", "D6"), ("A4", "C12"), ("A7", "B3"),
+                    ("A9", "C8"), ("B1", "C1"), ("B4", "C10"), ("B7", "D2"), ("B8", "D6"),
+                    ("C4", "D2"), ("C5", "D8")}
+# The one cross-category pair the frame allows, on a condition: C11 is added to
+# A3 only if the participant says the hidden value stopped them judging the output.
+FRAME_ALLOWED = {("A3", "C11")}
 
 # Filled in by the first author and given to the model as input, so they
 # should be identical across a session's sheets.
@@ -346,6 +356,18 @@ def audit_units(units):
     return findings
 
 
+def audit_frame_pairs(units):
+    """Units carrying both codes of a pair the frame says to choose between."""
+    findings = []
+    for _, row in units.iterrows():
+        codes = codes_in_row(row)
+        for pair in itertools.combinations(sorted(codes, key=ALL_CODES.index), 2):
+            if pair in FRAME_CHOOSE_ONE:
+                findings.append(f"{row['participant']}/{row['coder']}: {row['unit_id']} "
+                                f"carries {pair[0]} and {pair[1]}; the frame says to use one")
+    return findings
+
+
 def audit_corpus_arithmetic(units):
     """The paper's 'codeable minus interviewer-supplied = reported' needs every
     interviewer-supplied unit to be codeable."""
@@ -389,6 +411,7 @@ def audit_coder_alignment(units):
 def write_audit(units, problems):
     lines = ["LOAD PROBLEMS"] + (problems or ["  none"])
     lines += ["", "UNIT AUDIT"] + (audit_units(units) or ["  none"])
+    lines += ["", "FRAME DECISION RULES"] + (audit_frame_pairs(units) or ["  none"])
     lines += ["", "CORPUS ARITHMETIC"] + (audit_corpus_arithmetic(units) or ["  none"])
     lines += ["", "CODER ALIGNMENT"] + (audit_coder_alignment(units) or ["  none"])
     QUALITATIVE_DIR.mkdir(parents=True, exist_ok=True)

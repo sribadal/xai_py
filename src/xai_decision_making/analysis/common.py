@@ -1,4 +1,5 @@
 """Paths, study constants and the survey loader shared by both analyses."""
+import io
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -77,11 +78,11 @@ PARTICIPANT_ORDER = [f"P{i}" for i in range(1, 12)]
 
 # Two incomplete test sessions run by the first author.
 TEST_SESSIONS = {"7e6f6c86", "e2a08e2b"}
-TEST_ACCESS_CODES = {"followup_03", "shivam_followup_test"}
 
-# P1-P9 saw interface v1; P10 and P11 saw v2 (see CHANGELOG_v1_v2.md in the
-# supplement). Only attribution and counterfactual changed. Version is kept as
-# a column for the sensitivity checks; two participants are not a group.
+# P1-P9 saw interface v1; P10 and P11 saw v2 (see CHANGELOG_v1_v2.md at the
+# repository root). The panel changes were to attribution and counterfactual.
+# Version is kept as a column for the sensitivity checks; two participants
+# are not a group.
 INTERFACE_VERSION = {p: ("v2" if p in {"P10", "P11"} else "v1")
                      for p in PARTICIPANT_ORDER}
 V1_PARTICIPANTS = [p for p, v in INTERFACE_VERSION.items() if v == "v1"]
@@ -102,9 +103,25 @@ plt.rcParams.update({
 })
 
 
+_figure_viewers = []
+
+
+def show_figures_inline(dpi=110):
+    """In a notebook, also display each figure when it is saved."""
+    from IPython.display import Image, display
+
+    def view(fig):
+        buffer = io.BytesIO()
+        fig.savefig(buffer, format="png", dpi=dpi)
+        display(Image(buffer.getvalue()))
+    _figure_viewers[:] = [view]
+
+
 def save_figure(fig, folder, name):
     folder.mkdir(parents=True, exist_ok=True)
     fig.savefig(folder / f"{name}.pdf")
+    for view in _figure_viewers:
+        view(fig)
     plt.close(fig)
 
 
@@ -165,9 +182,6 @@ def load():
     raw = _read_survey_files()
     raw = raw.dropna(subset=["session_id"])
     raw = raw[raw["session_id"].astype(str).str.strip() != ""].copy()
-    if "access_code" in raw.columns:
-        codes = raw["access_code"].astype(str).str.strip().str.lower()
-        raw = raw[~codes.isin(TEST_ACCESS_CODES)].copy()
     raw["session"] = raw["session_id"].str[:8]
     raw = raw[~raw["session"].isin(TEST_SESSIONS)].copy()
 

@@ -177,6 +177,7 @@ uv run xai analyze qualitative --screening   # plus the screening tables
 
 It reads the de-identified survey exports and coding sheets in `src/xai_decision_making/analysis/data/`, and writes a workbook of tables, the figures and a text summary for each part to `src/xai_decision_making/analysis/output/`. The [analysis README](src/xai_decision_making/analysis/README.md) describes the inputs, the modules and every output.
 
+To read the results without running anything, see the [notebooks](notebooks/README.md): every table and figure, saved with its output.
 ---
 
 ## Architecture

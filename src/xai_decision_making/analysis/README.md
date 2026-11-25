@@ -29,6 +29,9 @@ analysis/
     coding.py             coding frame, reading the sheets, sheet checks
     agreement.py          Krippendorff's alpha between coders
     themes.py             theme counts, tables and figures
+    patterns.py           exploratory patterns: participant x code matrix,
+                          co-occurrence, profile per type, change during the
+                          session, valence by topic, deviant cases
     screening.py          which cross-tabulations go in the main text
                           (not in the default run)
 ```
@@ -39,7 +42,8 @@ analysis/
   the de-identified survey exports (P1–P9 and P10–P11). `common.PARTICIPANTS`
   maps each session to its participant number.
 - `data/coding_sheets/`: one `.xlsx` per session and coder, with the
-  participant and coder in the file name (`coding_sheet_P3_shivam.xlsx`).
+  participant and coder in the file name, where the coder is `author`,
+  `second_coder` or `model` (`coding_sheet_P3_author.xlsx`).
   The sheets contain transcript text and are not public; without them the
   qualitative part is skipped.
 

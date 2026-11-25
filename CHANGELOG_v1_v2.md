@@ -12,7 +12,7 @@ the README for what the tags in this repository cover.
 | Area | v1 (P1–P9) | v2 (P10–P11) |
 |---|---|---|
 | FACE counterfactual (`face.py`) | Target was the cohort median risk. Lab values were freely mutable, and treatment was not required to differ. | Target is this patient's own prediction plus a margin, so the retrieved case does better than this patient rather than better than average. Lab values are held near-fixed by an aggregate tolerance budget in clinical units (1.0, escalating to 3.0; no counterfactual is returned above 5.0). At least one treatment flag must differ. The top 10 candidates are re-verified after the immutability rules are applied, and registry sentinel values (such as 9999) are stripped. |
-| Feature-mutability policy (`feature_policy.py`) | `had_surg`, `had_syst`, `impulse_surg` and `impulse_syst` were immutable. | Those four are treated as binary treatment flags that may change. `CF_FREE_FLAGS`, `LAB_TOLERANCE` and `SENTINEL_VALUES` were added. This policy is shared by every counterfactual method, so the whole counterfactual family was re-audited (see the paper's Supplement 5). |
+| Feature-mutability policy (`feature_policy.py`) | `had_surg`, `had_syst`, `impulse_surg` and `impulse_syst` were immutable. | Those four are treated as binary treatment flags that may change. `CF_FREE_FLAGS`, `LAB_TOLERANCE` and `SENTINEL_VALUES` were added. This policy is shared by every counterfactual method, so the whole counterfactual family was re-audited; both audits are reported with the paper. |
 | Attribution panel: spacing (`xai_web` `6421dda`) | Bar width depended on the number of prediction horizons (three for MA-RSF, five for ConDOR), so the same panel looked different for the two models. | The same width for both models. |
 | Attribution panel: labels (`3a6a83d`) | For LIME (the ConDOR attribution method), each label carried the split condition after the variable name, for example "Surgery (≤ 0)". | Variable name only. TreeSHAP (MA-RSF) labels never had a condition, so they are unchanged. |
 | Counterfactual panel: changed features (`5976dfe`) | A feature was highlighted as changed whenever its value in the comparison differed from the patient's, even if the method had not changed it. Registry codes for unknown values (such as 9999) could be flagged as implausible. | Only the features the method changed are highlighted. Registry codes for unknown values are not flagged as implausible. |
@@ -36,5 +36,5 @@ P8 (5 June) saw the interface one commit before the other v1 participants: the p
 The method selection did not change. FACE remained the selected
 counterfactual for both models: it is still the only ConDOR counterfactual
 that is not dropped, and still the highest-scoring counterfactual on the
-MA-RSF. Its scores rose on both models. Both audits are in the paper's
-Supplement 5.
+MA-RSF. Its scores rose on both models. Both audits are reported with
+the paper.

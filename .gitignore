@@ -31,3 +31,11 @@ __pycache__/
 src/*.egg-info/
 build/
 dist/
+
+# Notebooks: held back until the data is approved
+notebooks/*
+!notebooks/.gitkeep
+!notebooks/README.md
+
+# Jupyter
+.ipynb_checkpoints/
