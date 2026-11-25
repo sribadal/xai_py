@@ -2,7 +2,7 @@
 
 This project is an explainability framework for clinical survival and quality-of-life prediction models. It was built for shared decision-making research in oncology. The framework generates patient-level explanations across four explanation modalities (attribution, counterfactual, case-based, and rule-based) and exports structured JSON that is consumed by a separate survey application.
 
-The project was developed as part of a thesis investigating which explanation modalities patients and clinicians find most useful for understanding AI-driven predictions in pancreatic cancer care (PACAP cohort).
+The project was developed as part of a thesis investigating which explanation modalities health professionals find most useful for understanding AI-driven predictions in pancreatic cancer care (PACAP cohort).
 
 ---
 
@@ -12,11 +12,15 @@ This repository contains two layers of code with different origins.
 
 **Original contribution: `explainability/`**
 
-The entire XAI framework is the core deliverable of this thesis. This includes the adapter pattern that wraps the prediction models, all 20+ explainability methods across four modalities, the sanity-check and Co-12 audit pipelines, the per-patient JSON export system, and the confidence metric enrichment. Everything under `src/xai_decision_making/explainability/` was written from scratch for this project. The `scripts/` folder (gitignored) contains local-only utilities such as the Co-12 audit runner and the confidence post-processor.
+The entire XAI framework is the core deliverable of this thesis. This includes the adapter pattern that wraps the prediction models, all 22 explainability methods across four modalities, the sanity-check and Co-12 audit pipelines, the per-patient JSON export system, and the confidence metric enrichment. Everything under `src/xai_decision_making/explainability/` was written from scratch for this project. The `scripts/` folder contains utilities such as the Co-12 audit runner and the confidence post-processor.
+
+**Original contribution: `analysis/`**
+
+The analysis of the clinician study: survey ratings and rankings, and the coded think-aloud sessions. It has its own [README](src/xai_decision_making/analysis/README.md).
 
 **Forked and restructured: `preprocessing/`, `models/`, `experiments/`**
 
-These modules originate from a separate research repository that handled data preprocessing, model training (RSF and ConDOR), and evaluation. This code was forked, reorganised into the current `src/xai_decision_making/` package layout, and adapted where needed (import paths, configuration, data loading) to integrate with the explainability layer. The model architectures, training pipelines, and preprocessing logic were not modified. The `analysis/` folder is also forked but gitignored.
+These modules originate from a separate research repository that handled data preprocessing, model training (RSF and ConDOR), and evaluation. This code was forked, reorganised into the current `src/xai_decision_making/` package layout, and adapted where needed (import paths, configuration, data loading) to integrate with the explainability layer. The model architectures, training pipelines, and preprocessing logic were not modified.
 
 In short, someone else built and trained the models. This project introduces explainability to those models.
 
@@ -28,8 +32,8 @@ The explainability layer wraps the two pre-trained prediction models behind a un
 
 **Supported models:**
 
-- **RSF** (Random Survival Forest) was trained on the PACAP clinical cohort. It predicts survival probabilities at 3, 6, and 12 months (90, 180, 365 days).
-- **ConDOR** is a neural quality-of-life prediction model based on ordinal regression with a temporal treatment block. It predicts QoL trajectories at 1, 3, 6, 9, and 12 months.
+- **MA-RSF** (missingness-avoiding Random Survival Forest) predicts overall survival from Netherlands Cancer Registry data. It predicts survival probabilities at 3, 6, and 12 months (90, 180, 365 days).
+- **ConDOR** is a conditional diffusion model that predicts quality-of-life trajectories (EORTC QLQ-C30 summary score) for the PACAP cohort, with separate pretreatment and treatment conditioning. It predicts QoL at 1, 3, 6, 9, and 12 months.
 
 **Explanation modalities and methods:**
 
@@ -48,8 +52,8 @@ The project uses [uv](https://docs.astral.sh/uv/) for dependency management. It 
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/xai-decision-making.git
-cd xai-decision-making
+git clone https://github.com/sribadal/xai_py.git
+cd xai_py
 
 # Install with uv
 uv sync
@@ -112,6 +116,13 @@ The project provides a single CLI entry point with four subcommands. Default art
 uv run xai <command> [args]
 ```
 
+The commands need different things:
+
+| Command | Needs | Runs from a fresh clone |
+|---|---|---|
+| `export`, `enrich`, `audit` | the trained model artifacts and the clinical data (see [Data](#data)) | no: both are private |
+| `analyze` | the study data in `src/xai_decision_making/analysis/data/`, included in the repository | yes |
+
 ### Export
 
 Generates per-patient explanation JSON for a given model. Loads the trained artifact, iterates over patients in the test set, runs the configured explainers, and writes one JSON file per patient.
@@ -146,11 +157,16 @@ uv run xai audit --only-method lime --only-modality attribution --refresh
 
 ### Analyze
 
-Runs the full results pipeline for the survey study (Study 2). Produces descriptive tables, statistical tests, and all figures.
+Runs the analysis of the clinician study (Study 2): the survey ratings and rankings, and the coded think-aloud sessions.
 
 ```bash
-uv run xai analyze
+uv run xai analyze                           # both parts
+uv run xai analyze quantitative              # survey only
+uv run xai analyze qualitative               # coding sheets only
+uv run xai analyze qualitative --screening   # plus the screening tables
 ```
+
+It reads the de-identified survey exports and coding sheets in `src/xai_decision_making/analysis/data/`, and writes a workbook of tables, the figures and a text summary for each part to `src/xai_decision_making/analysis/output/`. The [analysis README](src/xai_decision_making/analysis/README.md) describes the inputs, the modules and every output.
 
 ---
 
@@ -211,7 +227,9 @@ A `manifest.json` in each model directory records the export configuration, incl
 
 ## Data
 
-The project uses clinical data from the PACAP (Pancreatic Cancer Project) registry linked to the Netherlands Cancer Registry (NCR). Data files are not included in the repository.
+The models and explanations use clinical data from the Netherlands Cancer Registry (NCR) linked to the PACAP (Pancreatic Cancer Project) quality-of-life cohort. These data files, and the trained model artifacts, are not included in the repository: they are registry data or were trained on it. `export`, `enrich` and `audit` need both.
+
+The study data are included: the de-identified survey responses and coding sheets are in `src/xai_decision_making/analysis/data/` (see the [analysis README](src/xai_decision_making/analysis/README.md)).
 
 **Expected data layout:**
 
@@ -223,7 +241,7 @@ The project uses clinical data from the PACAP (Pancreatic Cancer Project) regist
 | `data/test_set_processed.csv` | Test split (processed features, used by RSF) |
 | `data/black_envelop_test_set_pacap.csv` | Held-out black-envelope test set |
 
-Clinical features include CCI, CA19-9, bilirubin, albumin, LDH, CRP, age category, performance status, tumour differentiation grade, clinical T/M staging, metastasis locations, and others. The RSF model uses 30 features in total.
+Clinical features include CCI, CA19-9, bilirubin, albumin, LDH, CRP, age category, performance status, tumour differentiation grade, clinical T/M staging, metastasis locations, and others. The MA-RSF uses 40 features in total.
 
 ---
 
