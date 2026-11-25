@@ -44,7 +44,6 @@ IMMUTABLE_FEATURES = {
     "qol_social_event", "qol_social_time", "qol_social_pretreatment",
     "qol_cognitive_event", "qol_cognitive_time", "qol_cognitive_pretreatment",
     "qol_role_event", "qol_role_time", "qol_role_pretreatment",
-    "had_surg", "had_syst", "impulse_surg", "impulse_syst",
     "diffgrad", "klin_tum_afm",
     "ct", "cn", "cm", "pt", "pn", "pm",
     "cstadium", "pstadium", "stadium",
@@ -59,6 +58,7 @@ BINARY_FEATURES = {
     "meta_long", "meta_lymf", "meta_perit", "meta_overig",
     "tumgericht_ther", "expl_chir", "chir", "destr",
     "meta_rt", "meta_chir", "lok_chemo_immuno",
+    "had_surg", "had_syst", "impulse_surg", "impulse_syst",
 }
 
 CATEGORICAL_CODED_FEATURES = {
@@ -190,3 +190,36 @@ def partition_features(feature_names, ranges):
         "categorical_values": categorical_values,
         "unknown": unknown,
     }
+
+CF_FREE_RSF = {"tumgericht_ther", "chir", "destr", "rt", "chemo"}
+CF_FREE_CONDOR = {"ts_surg", "had_surg", "impulse_surg",
+                  "ts_syst", "had_syst", "impulse_syst"}
+CF_FREE_FEATURES = CF_FREE_RSF | CF_FREE_CONDOR
+CF_FREE_FLAGS = {"tumgericht_ther", "chir", "destr", "rt", "chemo",
+                 "had_surg", "had_syst"}
+
+LAB_TOLERANCE = {
+    "albumine":   ("abs",   6.0),
+    "bilirubine": ("abs",  40.0),
+    "crp":        ("abs",  50.0),
+    "ldh":        ("abs", 120.0),
+    "kreatinine": ("abs",  40.0),
+    "hb":         ("abs",   2.0),
+    "ca199":      ("log10", 0.4),
+    "cea":        ("log10", 0.4),
+}
+
+SENTINEL_VALUES = {
+    "albumine": {999.9, 9999.0, 9999.9},
+    "ca199": {9000.0, 9999.0, 9999.9},
+    "crp":   {9000.0, 9999.0, 9999.9},
+    "cea":   {9000.0, 9999.0, 9999.9},
+    "ldh":   {9999.0},
+    "bilirubine": {9999.0},
+}
+
+def is_sentinel(feature, value):
+    try:
+        return float(value) in SENTINEL_VALUES.get(feature, ())
+    except (TypeError, ValueError):
+        return False
