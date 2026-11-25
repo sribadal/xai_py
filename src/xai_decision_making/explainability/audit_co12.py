@@ -104,7 +104,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 SRC = os.path.join(ROOT, "src")
 for _p in (ROOT, SRC):
     if _p not in sys.path:
