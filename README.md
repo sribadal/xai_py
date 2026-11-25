@@ -102,7 +102,6 @@ The core dependencies include numpy, pandas, scikit-learn, scikit-survival, torc
 | `imodels` | RuleFit rule-based |
 | `skope-rules` | Skope-Rules rule-based |
 | `masurvival` | Missingness-Avoiding survival model utilities |
-| `pingouin` | Statistical analysis |
 
 See `pyproject.toml` for the full dependency list with version pins.
 
@@ -122,6 +121,16 @@ The commands need different things:
 |---|---|---|
 | `export`, `enrich`, `audit` | the trained model artifacts and the clinical data (see [Data](#data)) | no: both are private |
 | `analyze` | the study data in `src/xai_decision_making/analysis/data/`, included in the repository | yes |
+
+## Versions
+
+| Tag | What it is |
+|---|---|
+| `interface-v1` | The explanation code before the changes for the follow-up sessions (P1–P9 saw v1). The repository starts on 10 July, after those sessions, so this is the last state before the changes, not a snapshot from the sessions themselves. |
+| `interface-v2` | After the FACE and feature-policy changes, as used for P10–P11. |
+| `paper-submission` | The code that produced the results in the paper and its supplements. |
+
+All differences between v1 and v2, in this repository and in `xai_web`, are listed in [CHANGELOG_v1_v2.md](CHANGELOG_v1_v2.md).
 
 ### Export
 
