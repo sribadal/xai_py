@@ -28,7 +28,6 @@ dependencies = [
   "imodels>=2.0.4",
   "alibi>=0.9.6",
   "skope-rules>=1.0.1",
-  "pingouin>=0.6.1",
   "openpyxl>=3.1.5",
 ]
 
